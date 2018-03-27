@@ -29,17 +29,12 @@ type Logger struct {
 }
 
 // New init new Logger with base fields
-func New(name string) *Logger {
-    fields := logrus.Fields{"module": name}
-    return &Logger{fields: fields}
-}
-
-// WithFields map Fields into logrus Fields
-func (l *Logger) WithFields(f Fields) *Logger {
+func WithFields(f Fields) *Logger {
+    fields := make(logrus.Fields, len(f))
     for k, v := range f {
-        l.fields[k] = v
+        fields[k] = v
     }
-    return l
+    return &Logger{fields: fields}
 }
 
 func (l *Logger) Error(message string) {
@@ -55,6 +50,11 @@ func (l *Logger) Info(message string) {
 func (l *Logger) Warning(message string) {
     l.appendFields()
     logrus.Warning(message)
+}
+
+func (l *Logger) Panic(message string) {
+    l.appendFields()
+    logrus.Panic(message)
 }
 
 func (l *Logger) appendFields() {
