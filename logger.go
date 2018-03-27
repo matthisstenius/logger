@@ -7,19 +7,19 @@ import (
     "github.com/bugsnag/bugsnag-go"
 )
 
+const (
+    debugLevel   = "DEBUG"
+    warningLevel = "WARNING"
+    errorLevel   = "ERROR"
+)
+
 func init() {
     logrus.SetFormatter(&logrus.JSONFormatter{})
     logrus.SetLevel(extractLogLevel())
 
-    bugsnag.Configure(bugsnag.Configuration{
-        APIKey: os.Getenv("BUGSNAG_API_KEY"),
-    })
-    hook, err := logrus_bugsnag.NewBugsnagHook()
-    if err != nil {
-        panic(err)
+    if os.Getenv("BUGSNAG_API_KEY") != "" {
+        addBugsnagHook()
     }
-
-    logrus.AddHook(hook)
 }
 
 type Fields map[string]interface{}
@@ -63,20 +63,29 @@ func extractLogLevel() logrus.Level {
     var level logrus.Level
 
     switch os.Getenv("LOG_LEVEL") {
-    case "DEBUG":
+    case debugLevel:
         level = logrus.DebugLevel
         break
-    case "WARNING":
+    case warningLevel:
         level = logrus.WarnLevel
         break
-    case "ERROR":
+    case errorLevel:
         level = logrus.ErrorLevel
         break
     default:
         level = logrus.ErrorLevel
     }
-
     return level
 }
 
-logger.WithFields
+func addBugsnagHook() {
+    bugsnag.Configure(bugsnag.Configuration{
+        APIKey: os.Getenv("BUGSNAG_API_KEY"),
+    })
+
+    hook, err := logrus_bugsnag.NewBugsnagHook()
+    if err != nil {
+        panic(err)
+    }
+    logrus.AddHook(hook)
+}
