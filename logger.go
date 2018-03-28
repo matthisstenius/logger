@@ -4,6 +4,7 @@ import (
     "github.com/sirupsen/logrus"
     "os"
     "github.com/Shopify/logrus-bugsnag"
+    "github.com/bugsnag/bugsnag-go"
 )
 
 const (
