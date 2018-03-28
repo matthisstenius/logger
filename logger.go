@@ -4,11 +4,11 @@ import (
     "github.com/sirupsen/logrus"
     "os"
     "github.com/Shopify/logrus-bugsnag"
-    "github.com/bugsnag/bugsnag-go"
 )
 
 const (
     debugLevel   = "DEBUG"
+    infoLevel    = "INFO"
     warningLevel = "WARNING"
     errorLevel   = "ERROR"
 )
@@ -38,29 +38,23 @@ func WithFields(f Fields) *Logger {
 }
 
 func (l *Logger) Error(message string) {
-    l.appendFields()
-    logrus.Error(message)
+    l.appendFields().Error(message)
 }
 
 func (l *Logger) Info(message string) {
-    l.appendFields()
-    logrus.Info(message)
+    l.appendFields().Info(message)
 }
 
 func (l *Logger) Warning(message string) {
-    l.appendFields()
-    logrus.Warning(message)
+    l.appendFields().Warning(message)
 }
 
 func (l *Logger) Panic(message string) {
-    l.appendFields()
-    logrus.Panic(message)
+    l.appendFields().Panic(message)
 }
 
-func (l *Logger) appendFields() {
-    if len(l.fields) > 0 {
-        logrus.WithFields(l.fields)
-    }
+func (l *Logger) appendFields() *logrus.Entry {
+    return logrus.WithFields(l.fields)
 }
 
 func extractLogLevel() logrus.Level {
@@ -69,6 +63,9 @@ func extractLogLevel() logrus.Level {
     switch os.Getenv("LOG_LEVEL") {
     case debugLevel:
         level = logrus.DebugLevel
+        break
+    case infoLevel:
+        level = logrus.InfoLevel
         break
     case warningLevel:
         level = logrus.WarnLevel
