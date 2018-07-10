@@ -1,4 +1,4 @@
-module logger
+module github.com/matthisstenius/logger
 
 require (
 	github.com/Shopify/logrus-bugsnag v0.0.0-20171204204709-577dee27f20d
