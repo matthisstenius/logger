@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/Shopify/logrus-bugsnag"
 	"github.com/bugsnag/bugsnag-go"
@@ -35,6 +36,13 @@ type Logger struct {
 
 // New init new Logger with base fields
 func WithFields(f Fields) *Logger {
+	fptr, file, row, ok := runtime.Caller(1)
+	if ok {
+		f["function"] = runtime.FuncForPC(fptr).Name()
+		f["file"] = file
+		f["row"] = row
+	}
+
 	fields := make(logrus.Fields, len(f))
 	for k, v := range f {
 		fields[k] = v
