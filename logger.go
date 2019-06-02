@@ -28,7 +28,12 @@ type Logger struct {
 	fields logrus.Fields
 }
 
-// New init new Logger with base fields
+// New makes new Logger object
+func New() *Logger {
+	return &Logger{fields: logrus.Fields{}}
+}
+
+// WithFields makes new Logger with custom fields fields
 func WithFields(f Fields) *Logger {
 	fptr, file, row, ok := runtime.Caller(1)
 	if ok {
