@@ -30,23 +30,23 @@ type Logger struct {
 
 // New makes new Logger object
 func New() *Logger {
-	return &Logger{fields: logrus.Fields{}}
-}
-
-// WithFields makes new Logger with custom fields fields
-func WithFields(f Fields) *Logger {
+	fields := logrus.Fields{}
 	fptr, file, row, ok := runtime.Caller(1)
 	if ok {
-		f["function"] = runtime.FuncForPC(fptr).Name()
-		f["file"] = file
-		f["row"] = row
-	}
-
-	fields := make(logrus.Fields, len(f))
-	for k, v := range f {
-		fields[k] = v
+		fields["function"] = runtime.FuncForPC(fptr).Name()
+		fields["file"] = file
+		fields["row"] = row
 	}
 	return &Logger{fields: fields}
+}
+
+// WithFields makes new Logger with custom fields
+func WithFields(f Fields) *Logger {
+	logger := New()
+	for k, v := range f {
+		logger.fields[k] = v
+	}
+	return logger
 }
 
 // Error log on error level
@@ -83,23 +83,16 @@ func (l *Logger) appendFields() *logrus.Entry {
 }
 
 func extractLogLevel() logrus.Level {
-	var level logrus.Level
-
 	switch os.Getenv("LOG_LEVEL") {
 	case debugLevel:
-		level = logrus.DebugLevel
-		break
+		return logrus.DebugLevel
 	case infoLevel:
-		level = logrus.InfoLevel
-		break
+		return logrus.InfoLevel
 	case warningLevel:
-		level = logrus.WarnLevel
-		break
+		return logrus.WarnLevel
 	case errorLevel:
-		level = logrus.ErrorLevel
-		break
+		return logrus.ErrorLevel
 	default:
-		level = logrus.ErrorLevel
+		return logrus.ErrorLevel
 	}
-	return level
 }
