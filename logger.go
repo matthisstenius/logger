@@ -36,7 +36,7 @@ func New() *Logger {
 // WithFields makes new Logger with custom fields
 func WithFields(f Fields) *Logger {
 	logger := New()
-	logger.fields = make(Fields)
+	logger.fields = make(map[string]interface{})
 	for k, v := range f {
 		logger.fields[k] = v
 	}
