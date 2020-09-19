@@ -30,13 +30,12 @@ type Logger struct {
 
 // New makes new Logger object
 func New() *Logger {
-	return &Logger{}
+	return &Logger{fields: map[string]interface{}{}}
 }
 
 // WithFields makes new Logger with custom fields
 func WithFields(f Fields) *Logger {
 	logger := New()
-	logger.fields = make(map[string]interface{})
 	for k, v := range f {
 		logger.fields[k] = v
 	}
