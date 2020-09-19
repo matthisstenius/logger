@@ -30,19 +30,13 @@ type Logger struct {
 
 // New makes new Logger object
 func New() *Logger {
-	fields := logrus.Fields{}
-	fptr, file, row, ok := runtime.Caller(1)
-	if ok {
-		fields["function"] = runtime.FuncForPC(fptr).Name()
-		fields["file"] = file
-		fields["row"] = row
-	}
-	return &Logger{fields: fields}
+	return &Logger{}
 }
 
 // WithFields makes new Logger with custom fields
 func WithFields(f Fields) *Logger {
 	logger := New()
+	logger.fields = make(Fields)
 	for k, v := range f {
 		logger.fields[k] = v
 	}
@@ -79,7 +73,17 @@ func (l *Logger) Panic(message string) {
 }
 
 func (l *Logger) appendFields() *logrus.Entry {
+	l.defaultFields()
 	return logrus.WithFields(l.fields)
+}
+
+func (l *Logger) defaultFields() {
+	fptr, file, row, ok := runtime.Caller(2)
+	if ok {
+		l.fields["function"] = runtime.FuncForPC(fptr).Name()
+		l.fields["file"] = file
+		l.fields["row"] = row
+	}
 }
 
 func extractLogLevel() logrus.Level {
