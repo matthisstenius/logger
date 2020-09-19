@@ -78,7 +78,7 @@ func (l *Logger) appendFields() *logrus.Entry {
 }
 
 func (l *Logger) defaultFields() {
-	fptr, file, row, ok := runtime.Caller(2)
+	fptr, file, row, ok := runtime.Caller(3)
 	if ok {
 		l.fields["function"] = runtime.FuncForPC(fptr).Name()
 		l.fields["file"] = file
